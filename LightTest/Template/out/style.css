@@ -1,0 +1,147 @@
+* {
+  margin: 0;
+  padding: 0;
+  user-select: none;
+}
+
+body {
+  background-color: whitesmoke;
+}
+
+section {
+  margin: 30px;
+  padding: 10px;
+  background-color: white;
+  box-shadow: 0 0 10px 3px rgba(0, 0, 0, 0.2);
+  border-radius: 5px;
+}
+section > .title {
+  display: flex;
+  align-items: center;
+  font-size: 16pt;
+  font-weight: bold;
+  margin: 10px 0;
+}
+section > .title > span {
+  display: block;
+  width: 30px;
+  height: 30px;
+  margin-inline-end: 10px;
+  position: relative;
+  cursor: pointer;
+  border-radius: 5px;
+}
+section > .title > span:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+section > .title > span::before {
+  display: inline-block;
+  border-radius: 100px;
+  content: "";
+  background-color: black;
+  position: absolute;
+  width: 20px;
+  height: 3px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+section > .title > span::after {
+  transition: transform ease-in-out 0.3s;
+  display: inline-block;
+  border-radius: 100px;
+  content: "";
+  background-color: black;
+  position: absolute;
+  width: 20px;
+  height: 3px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+section > .title > span.collapsed::after {
+  transform: translate(-50%, -50%) rotateZ(90deg);
+}
+section > .title > hr {
+  flex-grow: 1;
+  margin-inline-start: 10px;
+}
+section > .content {
+  padding: 0 20px;
+  overflow: hidden;
+  transition: height ease-in-out 0.3s;
+}
+section > .content > table {
+  width: 100%;
+  text-align: center;
+  table-layout: fixed;
+  border-collapse: separate;
+  border-spacing: 0 5px;
+}
+section > .content > table td {
+  position: relative;
+  border-radius: 100px;
+  padding: 5px;
+  background-clip: content-box;
+}
+section > .content > table td.icon {
+  width: 30px;
+  height: 30px;
+  color: white;
+}
+section > .content > table td.number {
+  font-family: monospace;
+  font-size: 12pt;
+  width: 60px;
+}
+section > .content > table td.name {
+  font-size: 12pt;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: start;
+}
+section > .content > table td.info {
+  background-color: deepskyblue;
+  cursor: help;
+  width: 30px;
+  height: 30px;
+  color: white;
+}
+section > .content > table td[data-icon=s] {
+  background-color: mediumseagreen;
+}
+section > .content > table td[data-icon=f] {
+  background-color: orangered;
+  cursor: help;
+}
+
+#info-provider {
+  max-height: min(200px, 70vh);
+  max-width: min(300px, 70vw);
+  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-wrap: break-word;
+  position: fixed;
+  transition: opacity ease-in-out 0.2s, top ease-out 0.1s, left ease-out 0.1s;
+  opacity: 0;
+  pointer-events: none;
+  background-color: black;
+  color: whitesmoke;
+  padding: 5px;
+  border-radius: 5px;
+}
+#info-provider::-webkit-scrollbar {
+  width: 5px;
+}
+#info-provider::-webkit-scrollbar-button {
+  display: none;
+}
+#info-provider::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: whitesmoke;
+}
+#info-provider::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+/*# sourceMappingURL=style.css.map */
