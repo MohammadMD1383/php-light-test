@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"module": "None",
+		"target": "ES2020",
+		"noImplicitAny": true,
+		"removeComments": true,
+		"allowUnreachableCode": false,
+		"strictNullChecks": true,
+		"strict": false,
+		"noImplicitUseStrict": false,
+		"alwaysStrict": true,
+		"outDir": "../out",
+		"sourceMap": true
+	}
+}
