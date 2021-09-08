@@ -3,4 +3,4 @@
 *(documentation) comming soon...*
 
 ---
-> for now you can refer to [example.php](exmple.php)
+> for now you can refer to [example.php](example.php)
