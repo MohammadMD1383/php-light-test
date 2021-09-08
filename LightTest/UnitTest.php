@@ -10,11 +10,13 @@ abstract class UnitTest
 {
 	use AssertionUtil;
 	
+	private static int $sectionCount = 0;
+	
 	public function run(): void
 	{
 		$reflect = new ReflectionClass($this);
 		
-		$this->sectionStart($reflect->name);
+		self::sectionStart($reflect->name);
 		
 		$testMethods = array_filter($reflect->getMethods(), fn($value) => str_starts_with($value->name, "test_"));
 		$testsCount = count($testMethods);
@@ -25,29 +27,40 @@ abstract class UnitTest
 			$testName = substr($methodName, 5);
 			$no = str_pad((string)($i + 1), $padLength, "0", STR_PAD_LEFT);
 			
-			$info = str_replace("\n", "<br>", (new ReflectionMethod($this, "$methodName"))->getDocComment());
-			/*if ($info) { # todo: needs more care
-				$tmp = explode("\n", $info);
-				for ($n = 0; $n < count($tmp); $n++) $tmp[$n] = trim($tmp[$n], "/* ");
-				$info = trim(implode("\n", $tmp));
-			} else $info = "No Info.";*/
-			if (!$info) $info = "No Info.";
+			$info = (new ReflectionMethod($this, "$methodName"))->getDocComment();
+			if ($info) {
+				$info = self::trimPHPDoc($info);
+			} else $info = "No Info.";
 			
 			try {
 				$this->$methodName();
-				$this->printResult(true, $no, $testName, $info);
+				self::printResult(true, $no, $testName, $info);
 			} catch (FailedTestException $e) {
-				$this->printResult(false, $no, $testName, $info, $e->getMessage());
+				self::printResult(false, $no, $testName, $info, $e->getMessage());
 			}
 		}
 		
-		$this->sectionEnd();
+		self::sectionEnd();
 	}
 	
-	private function sectionStart(string $name)
+	private static function trimPHPDoc(string $str): string
 	{
+		$tmp_arr = explode("\n", $str);
+		for ($i = 0; $i < count($tmp_arr); $i++) {
+			$tmp_str = trim($tmp_arr[$i]);
+			$tmp_str = trim($tmp_str, "/* ");
+			$tmp_arr[$i] = $tmp_str;
+		}
+		$tmp_arr = array_filter($tmp_arr, fn($item) => $item !== "");
+		return implode("<br>", $tmp_arr);
+	}
+	
+	private static function sectionStart(string $name)
+	{
+		$c = ++self::$sectionCount;
+		
 		print <<<HTML
-			<section>
+			<section style="animation-delay: ${c}s">
 				<div class="title">
 					<span class="collapsed"></span>
 					<div>$name</div>
@@ -59,7 +72,7 @@ abstract class UnitTest
 		HTML;
 	}
 	
-	private function sectionEnd()
+	private static function sectionEnd()
 	{
 		print <<<HTML
 					</table>
@@ -68,7 +81,7 @@ abstract class UnitTest
 		HTML;
 	}
 	
-	private function printResult(bool $success, string $no, string $name, string $info, string $errInfo = null)
+	private static function printResult(bool $success, string $no, string $name, string $info, string $errInfo = null)
 	{
 		if ($success) {
 			$icon = "&check;";

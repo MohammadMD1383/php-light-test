@@ -19,6 +19,7 @@ class Functions
 			</head>
 			
 			<body>
+				<h1>PHP Light Test Results</h1>
 		HTML;
 	}
 	
