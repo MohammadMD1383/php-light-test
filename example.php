@@ -1,38 +1,75 @@
 <?php
 
+use LightTest\Runner;
 use LightTest\UnitTest;
-use LightTest\Template\Functions;
 
-spl_autoload_register();
+spl_autoload_register(fn (string $str) => require_once str_replace("\\", "/", $str) . ".php");
 
-// @formatter:off
 class MyTestCase extends UnitTest
 {
 	/**
 	 * Test Information on this method
 	 */
-	public function test_test_number_1() { self::expectExact(12, 12); }
-	public function test_test_number_2() { self::expectExact(13, 6); }
-	public function test_test_number_3() { self::expectExact(14, 14); }
-	public function test_test_number_4() { self::expectExact(15, 6); }
-	public function test_test_number_5() { self::expectExact(16, 33); }
-	public function test_test_number_7() { self::expectExact(18, 18); }
-	public function test_test_number_10() { self::expectExact(21, 66); }
-	public function test_test_number_13() { self::expectExact(24, 63); }
-	public function test_test_number_14() { self::expectExact(25, 23); }
-	public function test_test_number_15() { self::expectExact(26, 96); }
+	public function test_test_number_1()
+	{
+		self::assertExactlyEqual(12, 12);
+	}
+	public function test_test_number_2()
+	{
+		self::assertExactlyEqual(13, 6);
+	}
+	public function test_test_number_3()
+	{
+		self::assertExactlyEqual(14, 14);
+	}
+	public function test_test_number_4()
+	{
+		self::assertExactlyEqual(15, 6);
+	}
+	public function test_test_number_5()
+	{
+		self::assertExactlyEqual(16, 33);
+	}
+	public function test_test_number_7()
+	{
+		self::assertExactlyEqual(18, 18);
+	}
+	public function test_test_number_10()
+	{
+		self::assertExactlyEqual(21, 66);
+	}
+	public function test_test_number_13()
+	{
+		self::assertExactlyEqual(24, 63);
+	}
+	public function test_test_number_14()
+	{
+		self::assertExactlyEqual(25, 23);
+	}
+	public function test_test_number_15()
+	{
+		self::assertExactlyEqual(26, 96);
+	}
 }
 
-class MySomeAnotherTest extends MyTestCase {}
-
-class AGoodTestClass extends MyTestCase {}
-// @formatter:on
-
-Functions::pageStart();
-$test1 = new MyTestCase();
-$test2 = new MySomeAnotherTest();
-$test3 = new AGoodTestClass();
-$test1->run();
-$test2->run();
-$test3->run();
-Functions::pageEnd();
+new Runner(
+	new MyTestCase(),
+	new class extends UnitTest
+	{
+		public function test_someTest()
+		{
+			self::assertExactlyEqual(1, 2);
+		}
+	},
+	new class extends UnitTest
+	{
+		/**
+		 * Information
+		 * Multiline
+		 */
+		public function test_someTest()
+		{
+			self::assertExactlyEqual(2, 4, fn($a, $b) => $a ** 2 === $b, "2^2 !== 5");
+		}
+	}
+);
