@@ -3,12 +3,26 @@
 * {
 	margin: 0;
 	padding: 0;
+	-webkit-user-select: none;
+	-ms-user-select: none;
 	user-select: none;
+}
+
+html {
+	--anim-time: 1s;
+
+	&.no-anim {
+		--anim-time: 0s;
+
+		& * {
+			animation-delay: 0s !important;
+		}
+	}
 }
 
 body {
 	background-color: whitesmoke;
-	
+
 	& > h1 {
 		width: max-content;
 		margin: 50px auto;
@@ -19,32 +33,32 @@ body {
 		@include util.box-shadow(0, 0, 10, 5);
 		@include util.fade-in();
 	}
-	
+
 	&::-webkit-scrollbar {
 		width: 10px;
 	}
-	
+
 	&::-webkit-scrollbar-button {
 		display: none;
 	}
-	
+
 	&::-webkit-scrollbar-thumb {
 		background-color: rgba(0, 0, 0, var(--scr-opacity));
 		--scr-opacity: 0.3;
-		
+
 		&:hover {
 			--scr-opacity: 0.5;
 		}
-		
+
 		&:active {
 			--scr-opacity: 0.8;
 		}
 	}
-	
+
 	&::-webkit-scrollbar-track {
 		background-color: rgba(0, 0, 0, var(--scr-opacity));
 		--scr-opacity: 0;
-		
+
 		&:hover {
 			--scr-opacity: 0.1;
 		}
@@ -58,14 +72,14 @@ section {
 	background-color: white;
 	@include util.fade-in();
 	@include util.box-shadow(0, 0, 10, 3);
-	
+
 	& > .title {
 		font-size: 16pt;
 		font-weight: bold;
 		display: flex;
 		align-items: center;
 		margin: 10px 0;
-		
+
 		& > span {
 			position: relative;
 			display: block;
@@ -73,11 +87,11 @@ section {
 			cursor: pointer;
 			border-radius: 5px;
 			margin-inline-end: 10px;
-			
+
 			&:hover {
 				background-color: rgba(0, 0, 0, 0.1);
 			}
-			
+
 			@mixin common-before-after() {
 				position: absolute;
 				top: 50%;
@@ -89,76 +103,77 @@ section {
 				border-radius: 100px;
 				background-color: black;
 			}
-			
+
 			&::before {
 				@include common-before-after();
 				transform: translate(-50%, -50%);
 			}
-			
+
 			&::after {
 				transition: transform ease-in-out 0.3s;
 				transform: translate(-50%, -50%);
 				@include common-before-after();
 			}
-			
+
 			&.collapsed::after {
 				transform: translate(-50%, -50%) rotateZ(90deg);
 			}
 		}
-		
+
 		& > hr {
 			flex-grow: 1;
 			margin-inline-start: 10px;
 		}
 	}
-	
+
 	& > .content {
 		overflow: hidden;
 		padding: 0 20px;
 		transition: height ease-in-out 0.3s;
-		
+
 		& > table {
 			width: 100%;
 			table-layout: fixed;
 			border-spacing: 0 5px;
 			border-collapse: separate;
 			text-align: center;
-			
+
 			& td {
 				position: relative;
 				padding: 5px;
 				border-radius: 100px;
+				-webkit-background-clip: content-box;
 				background-clip: content-box;
-				
+
 				&.icon {
 					@include util.size(30);
 					color: white;
 				}
-				
+
 				&.number {
 					font-family: monospace;
 					font-size: 12pt;
 					width: 60px;
 				}
-				
+
 				&.name {
 					font-size: 12pt;
 					overflow: hidden;
 					text-align: start;
 					text-overflow: ellipsis;
 				}
-				
+
 				&.info {
 					@include util.size(30);
 					cursor: help;
 					color: white;
 					background-color: deepskyblue;
 				}
-				
+
 				&[data-icon="s"] {
 					background-color: mediumseagreen;
 				}
-				
+
 				&[data-icon="f"] {
 					cursor: help;
 					background-color: orangered;
@@ -182,20 +197,20 @@ section {
 	border-radius: 5px;
 	background-color: black;
 	overflow-wrap: break-word;
-	
+
 	&::-webkit-scrollbar {
 		width: 5px;
 	}
-	
+
 	&::-webkit-scrollbar-button {
 		display: none;
 	}
-	
+
 	&::-webkit-scrollbar-thumb {
 		border-radius: 5px;
 		background-color: whitesmoke;
 	}
-	
+
 	&::-webkit-scrollbar-track {
 		background-color: transparent;
 	}

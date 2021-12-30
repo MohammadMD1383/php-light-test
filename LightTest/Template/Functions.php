@@ -4,13 +4,14 @@ namespace LightTest\Template;
 
 class Functions
 {
-	public static function pageStart()
+	public static function pageStart(bool $enableAnimations = false)
 	{
 		$css = file_get_contents(dirname(__FILE__) . "/out/style.css");
-		
+		$noAnim = $enableAnimations ? "" : "no-anim";
+
 		print <<<HTML
 			<!doctype html>
-			<html lang="en">
+			<html lang="en" class="$noAnim">
 			<head>
 				<meta charset="UTF-8">
 				<meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -22,11 +23,11 @@ class Functions
 				<h1>PHP Light Test Results</h1>
 		HTML;
 	}
-	
+
 	public static function pageEnd()
 	{
 		$js = file_get_contents(dirname(__FILE__) . "/out/script.js");
-		
+
 		print <<<HTML
 				<script>$js</script>
 			</body>

@@ -52,7 +52,7 @@ class MyTestCase extends UnitTest
 	}
 }
 
-new Runner(
+Runner::withoutAnimation(
 	new MyTestCase(),
 	new class extends UnitTest
 	{
