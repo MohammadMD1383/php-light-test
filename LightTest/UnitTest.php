@@ -2,61 +2,70 @@
 
 namespace LightTest;
 
+use LightTest\Error\FailedTestException;
 use ReflectionClass;
 use ReflectionMethod;
-use LightTest\Exception\FailedTestException;
 
-abstract class UnitTest
-{
-	use AssertionUtil;
+abstract class UnitTest {
+	use Assertions;
 	
 	private static int $sectionCount = 0;
 	
-	public function run(): void
-	{
-		$reflect = new ReflectionClass($this);
-		
-		self::sectionStart($reflect->name);
-		
-		$testMethods = array_filter($reflect->getMethods(), fn($value) => str_starts_with($value->name, "test_"));
+	private array $testResults = [];
+	
+	public function run(): void {
+		$reflector = new ReflectionClass($this);
+		$testMethods = array_filter($reflector->getMethods(), fn($method) => str_starts_with($method->name, "test_"));
 		$testsCount = count($testMethods);
-		$padLength = (int)log10($testsCount) + 1;
+		$succeededTests = 0;
 		
 		for ($i = 0; $i < $testsCount; $i++) {
-			$methodName = $testMethods[$i]->name;
-			$testName = substr($methodName, 5);
-			$no = str_pad((string)($i + 1), $padLength, "0", STR_PAD_LEFT);
+			$testMethodName = $testMethods[$i]->name;
+			$testName = substr($testMethodName, 5);
 			
-			$info = (new ReflectionMethod($this, "$methodName"))->getDocComment();
-			if ($info) {
-				$info = self::trimPHPDoc($info);
-			} else $info = "No Info.";
+			/** @noinspection PhpUnhandledExceptionInspection */
+			$testInfo = (new ReflectionMethod($this, $testMethodName))->getDocComment();
+			if ($testInfo) {
+				$testInfo = self::trimPHPDoc($testInfo);
+			} else $testInfo = "No comment found for this test.";
 			
+			/** @var string|null $failInfo */
+			$failInfo = null;
 			try {
-				$this->$methodName();
-				self::printResult(true, $no, $testName, $info);
+				$this->$testMethodName();
+				$succeededTests++;
 			} catch (FailedTestException $e) {
-				self::printResult(false, $no, $testName, $info, $e->getMessage());
+				$failInfo = $e->getMessage();
 			}
+			
+			$this->testResults[] = [
+				'succeeded' => is_null($failInfo),
+				'name' => $testName,
+				'comment' => $testInfo,
+				'failInfo' => $failInfo
+			];
 		}
 		
+		self::sectionStart(self::trimPHPDoc($reflector->getDocComment()) ?? $reflector->name, $succeededTests / $testsCount * 100);
+		$this->printResults();
 		self::sectionEnd();
 	}
 	
-	private static function trimPHPDoc(string $str): string
-	{
-		$tmp_arr = explode("\n", $str);
-		for ($i = 0; $i < count($tmp_arr); $i++) {
-			$tmp_str = trim($tmp_arr[$i]);
-			$tmp_str = trim($tmp_str, "/* ");
-			$tmp_arr[$i] = $tmp_str;
+	private static function trimPHPDoc(string|bool $str): ?string {
+		if (!$str) return null;
+		
+		$lines = explode("\n", $str);
+		for ($i = 0; $i < count($lines); $i++) {
+			$line = trim($lines[$i]);
+			$line = trim($line, "/* ");
+			$lines[$i] = $line;
 		}
-		$tmp_arr = array_filter($tmp_arr, fn($item) => $item !== "");
-		return implode("<br>", $tmp_arr);
+		
+		$lines = array_filter($lines, fn($line) => $line !== "");
+		return implode("<br>", $lines);
 	}
 	
-	private static function sectionStart(string $name)
-	{
+	private static function sectionStart(string $name, float $successPercent): void {
 		$c = ++self::$sectionCount;
 		
 		print <<<HTML
@@ -65,6 +74,7 @@ abstract class UnitTest
 					<span class="collapsed"></span>
 					<div>$name</div>
 					<hr />
+					<div class="progress" style="--progress-success: $successPercent%;"></div>
 				</div>
 				
 				<div class="content" style="height: 0;">
@@ -72,8 +82,7 @@ abstract class UnitTest
 		HTML;
 	}
 	
-	private static function sectionEnd()
-	{
+	private static function sectionEnd(): void {
 		print <<<HTML
 					</table>
 				</div>
@@ -81,23 +90,30 @@ abstract class UnitTest
 		HTML;
 	}
 	
-	private static function printResult(bool $success, string $no, string $name, string $info, string $errInfo = null)
-	{
-		if ($success) {
-			$icon = "&check;";
-			$status = "s";
-		} else {
-			$icon = "&times;";
-			$status = "f";
-		}
+	private function printResults(): void {
+		$testResultsCount = count($this->testResults);
+		$padLength = (int)log10($testResultsCount) + 1;
 		
-		print <<<HTML
+		for ($i = 0; $i < $testResultsCount; $i++) {
+			$testResult = $this->testResults[$i];
+			$testNumber = str_pad((string)($i + 1), $padLength, "0", STR_PAD_LEFT);
+			
+			if ($testResult['succeeded']) {
+				$icon = "&check;";
+				$status = "s";
+			} else {
+				$icon = "&times;";
+				$status = "f";
+			}
+			
+			print <<<HTML
 			<tr>
-				<td class="icon" data-icon="$status" data-info="$errInfo">$icon</td>
-				<td class="number">$no</td>
-				<td class="name">$name</td>
-				<td class="info" data-info="$info">?</td>
+				<td class="icon" data-icon="$status" data-info="{$testResult['failInfo']}">$icon</td>
+				<td class="number">$testNumber</td>
+				<td class="name">{$testResult['name']}</td>
+				<td class="info" data-info="{$testResult['comment']}">?</td>
 			</tr>
 		HTML;
+		}
 	}
 }

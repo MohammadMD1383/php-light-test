@@ -31,18 +31,18 @@ infoButtons.forEach((btn: HTMLElement) => {
 	btn.addEventListener("mousemove", (e) => {
 		const clientRect = infoProvider.getBoundingClientRect();
 		const screenHeight = document.documentElement.clientHeight;
-		
+
 		let top = e.y - clientRect.height / 2;
 		let left = e.x;
 		if (btn.classList.contains("icon")) left += 15;
 		else left -= clientRect.width + 15;
-		
+
 		const down = e.y + clientRect.height / 2;
 		const up = e.y - clientRect.height / 2;
-		
+
 		if (down > screenHeight) top -= down - screenHeight;
 		if (up < 0) top += -up;
-		
+
 		infoProvider.style.top = `${top}px`;
 		infoProvider.style.left = `${left}px`;
 	});

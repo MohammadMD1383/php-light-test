@@ -1,0 +1,20 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+indent_size = 4
+indent_style = tab
+insert_final_newline = true
+max_line_length = 999999999
+tab_width = 4
+
+ij_php_tab_width = 4
+ij_php_continuation_indent_size = 4
+ij_php_indent_size = 4
+ij_php_keep_indents_on_empty_lines = true
+ij_php_method_brace_style = end_of_line
+ij_php_class_brace_style = end_of_line
+ij_php_anonymous_brace_style = end_of_line
+ij_php_block_brace_style = end_of_line
+ij_php_lambda_brace_style = end_of_line
